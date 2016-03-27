@@ -6,17 +6,18 @@ public class Player : MonoBehaviour {
     private Camera cam;
     public GameObject p;
     [SerializeField]
-    float speed = 1.0f;
+    float speed;
     [SerializeField]
     float acceleration = 0.5f;
     [SerializeField]
-    const float startSpeed = 1.0f;
+    float startSpeed = 1.5f;
     [SerializeField]
-    const float topSpeed = 4.0f;
+    float topSpeed = 5.0f;
 
     [SerializeField]
     int lives = 3;
-    const int maxLives = 3;
+	[SerializeField]
+    int maxLives = 3;
 
     [SerializeField]
     float score;
@@ -79,26 +80,26 @@ public class Player : MonoBehaviour {
 
     private void MoveToLeft()
     {
-        p.transform.position = new Vector3(track.leftLaneX(), p.transform.position.y, p.transform.position.z);
+        p.transform.position = new Vector3(track.leftLaneX, p.transform.position.y, p.transform.position.z);
     }
     private void MoveToCentre() {
-        p.transform.position = new Vector3(track.midLaneX(), p.transform.position.y, p.transform.position.z);
+        p.transform.position = new Vector3(track.midLaneX, p.transform.position.y, p.transform.position.z);
     }
     private void MoveToRight() {
-        p.transform.position = new Vector3(track.rightLaneX(), p.transform.position.y, p.transform.position.z);
+        p.transform.position = new Vector3(track.rightLaneX, p.transform.position.y, p.transform.position.z);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("obstacle"))
         {
-            Debug.Log("collided with obstacle");
-            Destroy(other.gameObject);
+			LoseLife();
         }
-        if (other.CompareTag("life"))
+        else if (other.CompareTag("life"))
         {
-
+			GainLife();
         }
+		Destroy(other.gameObject);
     }
 
     private void GainLife()
