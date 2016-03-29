@@ -48,9 +48,10 @@ public class Track : MonoBehaviour {
     private float obstacleSpawnDistancer;
     private float lifeSpawnDistancer;
 
-
     [SerializeField]
     GameObject p;
+
+    //private ArrayList trackObjects = new ArrayList();
 
 	public float leftLaneX;
 	public float midLaneX;
@@ -86,6 +87,7 @@ public class Track : MonoBehaviour {
 	void Update () {
         Scroll();
         //TickSpawnTimer();
+        //Debug.Log("" + trackObjects.Count);
 	}
 
     private void Scroll(){
@@ -141,38 +143,101 @@ public class Track : MonoBehaviour {
 
     private void SpawnObstacle()
     {
-        //GameObject obstacle = Instantiate(Obstacle);
+        GameObject obstacle = Instantiate(Obstacle);
+        //trackObjects.Add(obstacle);
         int lane = Random.Range(0, 2);
 
         if (lane == 0)
         {
-            //obstacle.transform.position = new Vector3(leftLaneX(), p.transform.position.y + 5.0f, 0.0f);
-            Instantiate(Obstacle, new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
+            MoveToLane(obstacle, lane);
+            //obstacle.transform.position = new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f);
+            //Instantiate(Obstacle, new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
         }
         else if (lane == 1)
         {
-            //obstacle.transform.position = new Vector3(midLaneX(), p.transform.position.y + 5.0f, 0.0f);
-            Instantiate(Obstacle, new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
+            MoveToLane(obstacle, lane);
+            //obstacle.transform.position = new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f);
+            //Instantiate(Obstacle, new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
         }
         else if (lane == 2)
         {
-            //obstacle.transform.position = new Vector3(rightLaneX(), p.transform.position.y + 5.0f, 0.0f);
-            Instantiate(Obstacle, new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
+            MoveToLane(obstacle, lane);
+            //obstacle.transform.position = new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f);
+            //Instantiate(Obstacle, new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
         }
 
+        CheckOverlap(obstacle, lane);
     }
 
     private void SpawnLife()
     {
         GameObject life = Instantiate(Life);
+        //trackObjects.Add(life);
+
         int lane = Random.Range(0, 2);
 
-        if (lane == 0)
-            life.transform.position = new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f);
-        else if (lane == 1)
-            life.transform.position = new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f);
-        else if (lane == 2)
-            life.transform.position = new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f);
+        MoveToLane(life, lane);
+        
+        CheckOverlap(life, lane);
+    }
 
+    private void CheckOverlap(GameObject go, int lane)
+    {
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+        foreach (GameObject o in obstacles)
+        {
+            if (o == go)
+            {
+                continue;
+            }
+            else if (my2Dintersect(go.GetComponent<Renderer>().bounds, o.GetComponent<Renderer>().bounds))
+            {
+                Debug.Log("overlap");
+                SwitchLane(go, lane);
+                //CheckOverlap(go, lane); // potential infinite loop
+            }
+        }
+
+        //GameObject[] lifes = GameObject.FindGameObjectsWithTag("life");
+        //foreach (GameObject l in lifes)
+        //{
+        //    if (l == go)
+        //    {
+        //        continue;
+        //    }
+        //    //else if (go.GetComponent<Collider2D>().OverlapPoint(new Vector2(l.transform.position.x, l.transform.position.y)))
+        //    else if (my2Dintersect(go.GetComponent<Renderer>().bounds, l.GetComponent<Renderer>().bounds))
+        //    {
+        //        SwitchLane(go, lane);
+        //        CheckOverlap(go, lane); // potential infinite loop
+        //    }
+        //}
+    }
+
+    private void SwitchLane(GameObject go, int lane)
+    {
+        int newlane;
+        do
+        {
+           newlane = Random.Range(0, 2);
+        } while (newlane == lane);
+
+        MoveToLane(go, newlane);
+    }
+
+    private void MoveToLane(GameObject go, int lane)
+    {
+        if (lane == 0)
+            go.transform.position = new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f);
+        else if (lane == 1)
+            go.transform.position = new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f);
+        else if (lane == 2)
+            go.transform.position = new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f);
+
+    }
+
+    bool my2Dintersect(Bounds boundsA, Bounds boundsB)
+    {
+        return boundsA.min.x <= boundsB.max.x && boundsA.max.x >= boundsB.min.x && boundsA.min.y <= boundsB.max.y && boundsA.max.y >= boundsB.min.y;
     }
 }

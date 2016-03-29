@@ -4,31 +4,33 @@ using System.Collections;
 public class Player : MonoBehaviour {
 
     private Camera cam;
-    public GameObject p;
     [SerializeField]
-    float speed;
-    [SerializeField]
-    float acceleration = 0.5f;
-    [SerializeField]
-    float startSpeed = 1.5f;
-    [SerializeField]
-    float topSpeed = 5.0f;
+    private GameObject p;
 
     [SerializeField]
-    int lives = 3;
+    private float speed;
+    [SerializeField]
+    private float acceleration = 0.5f;
+    [SerializeField]
+    private float startSpeed = 1.5f;
+    [SerializeField]
+    private float topSpeed = 5.0f;
+
+    [SerializeField]
+    public int lives = 3;
 	[SerializeField]
-    int maxLives = 3;
+    private int maxLives = 3;
 
     [SerializeField]
-    float score;
+    public float score;
 
     [SerializeField]
-    Track track;
+    private Track track;
 
     // Use this for initialization
     void Start()
     {
-        cam = FindObjectOfType<Camera>();
+        cam = FindObjectOfType<Camera>(); // assuming there's only 1 camera in the scene
         speed = startSpeed;
         score = 0;
     }
@@ -91,6 +93,7 @@ public class Player : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // check against the objects tag (can be changed in-editor)
         if (other.CompareTag("obstacle"))
         {
 			LoseLife();
@@ -111,7 +114,13 @@ public class Player : MonoBehaviour {
     private void LoseLife()
     {
         lives--;
-        //if (lives <= 0)
-            //; //gameover
+        if (lives <= 0)
+        {
+            PlayerPrefs.SetInt("Score", (int)score);
+            int high = PlayerPrefs.GetInt("HighScore", 0);
+            if((int)score > high)
+                PlayerPrefs.SetInt("HighScore", (int)score);
+            Application.LoadLevel("gameover_scene");
+        }
     }
 }
