@@ -9,11 +9,10 @@ public class DestroyBelowScreen : MonoBehaviour {
 	void Start () {
         cam = FindObjectOfType<Camera>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (!(gameObject.GetComponent<Renderer>().isVisible))
-            if (gameObject.transform.position.y < cam.transform.position.y)
-                Destroy(gameObject);
+
+    void OnBecameInvisible()
+    {
+        if (gameObject.transform.position.y < cam.transform.position.y)
+            Destroy(gameObject);
     }
 }

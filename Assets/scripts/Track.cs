@@ -13,21 +13,7 @@ public class Track : MonoBehaviour {
 	GameObject LaneSection;
 
     [SerializeField]
-    GameObject SectionA;
-    [SerializeField]
-    Transform LaneA0;
-    [SerializeField]
-    Transform LaneA1;
-    [SerializeField]
-    Transform LaneA2;
-    [SerializeField]
-    GameObject SectionB;
-    //[SerializeField]
-    //Transform LaneB0;
-    //[SerializeField]
-    //Transform LaneB1;
-    //[SerializeField]
-    //Transform LaneB2;
+    GameObject p;
 
     private GameObject bottomSection;
     private GameObject topSection;
@@ -48,18 +34,9 @@ public class Track : MonoBehaviour {
     private float obstacleSpawnDistancer;
     private float lifeSpawnDistancer;
 
-    [SerializeField]
-    GameObject p;
-
-    //private ArrayList trackObjects = new ArrayList();
-
 	public float leftLaneX;
 	public float midLaneX;
 	public float rightLaneX;
-
-//    public float LeftLaneX() { return LaneA0.position.x; }
-//    public float MidLaneX() { return LaneA1.position.x; }
-//    public float RightLaneX() { return LaneA2.position.x; }
 
     // Use this for initialization
     void Start () {
@@ -73,9 +50,6 @@ public class Track : MonoBehaviour {
 		midLaneX = 0;
 		rightLaneX = third;
 
-        //bottomSection = SectionA;
-        //topSection = SectionB;
-
         obstacleSpawnTimer = TimeBetweenObstacleSpawns;
         lifeSpawnTimer = TimeBetweenLifeSpawns;
 
@@ -87,7 +61,6 @@ public class Track : MonoBehaviour {
 	void Update () {
         Scroll();
         //TickSpawnTimer();
-        //Debug.Log("" + trackObjects.Count);
 	}
 
     private void Scroll(){
@@ -144,27 +117,9 @@ public class Track : MonoBehaviour {
     private void SpawnObstacle()
     {
         GameObject obstacle = Instantiate(Obstacle);
-        //trackObjects.Add(obstacle);
         int lane = Random.Range(0, 2);
 
-        if (lane == 0)
-        {
-            MoveToLane(obstacle, lane);
-            //obstacle.transform.position = new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f);
-            //Instantiate(Obstacle, new Vector3(leftLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
-        }
-        else if (lane == 1)
-        {
-            MoveToLane(obstacle, lane);
-            //obstacle.transform.position = new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f);
-            //Instantiate(Obstacle, new Vector3(midLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
-        }
-        else if (lane == 2)
-        {
-            MoveToLane(obstacle, lane);
-            //obstacle.transform.position = new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f);
-            //Instantiate(Obstacle, new Vector3(rightLaneX, p.transform.position.y + 5.0f, 0.0f), Quaternion.identity);
-        }
+        MoveToLane(obstacle, lane);
 
         CheckOverlap(obstacle, lane);
     }
