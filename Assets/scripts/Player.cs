@@ -97,12 +97,13 @@ public class Player : MonoBehaviour {
         if (other.CompareTag("obstacle"))
         {
 			LoseLife();
+			other.gameObject.SetActive(false);
         }
         else if (other.CompareTag("life"))
         {
+			Destroy(other.gameObject);
 			GainLife();
         }
-		Destroy(other.gameObject);
     }
 
     private void GainLife()

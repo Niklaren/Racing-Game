@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class Track : MonoBehaviour {
 
     [SerializeField]
     GameObject Obstacle;
+	private const int maxObstacles = 10;
+	private GameObject[] obstaclePool = new GameObject[maxObstacles];
+	private Vector3 nullPos = new Vector3 (-999,-999,-999);
+
     [SerializeField]
     GameObject Life;
 	[SerializeField]
@@ -49,6 +53,12 @@ public class Track : MonoBehaviour {
 		leftLaneX = -third;
 		midLaneX = 0;
 		rightLaneX = third;
+
+		for (int i = 0; i < maxObstacles; i++)
+		{
+			obstaclePool[i] = (GameObject)Instantiate(Obstacle, nullPos, Quaternion.identity);
+			obstaclePool[i].SetActive(false);
+		}
 
         obstacleSpawnTimer = TimeBetweenObstacleSpawns;
         lifeSpawnTimer = TimeBetweenLifeSpawns;
@@ -116,7 +126,9 @@ public class Track : MonoBehaviour {
 
     private void SpawnObstacle()
     {
-        GameObject obstacle = Instantiate(Obstacle);
+        //GameObject obstacle = Instantiate(Obstacle);
+		GameObject obstacle = GetNextAvailableObstacle ();
+		obstacle.SetActive(true);
         int lane = Random.Range(0, 2);
 
         MoveToLane(obstacle, lane);
@@ -138,8 +150,8 @@ public class Track : MonoBehaviour {
 
     private void CheckOverlap(GameObject go, int lane)
     {
-        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
-        foreach (GameObject o in obstacles)
+        //GameObject[] obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+        foreach (GameObject o in obstaclePool)
         {
             if (o == go)
             {
@@ -191,8 +203,17 @@ public class Track : MonoBehaviour {
 
     }
 
-    bool my2Dintersect(Bounds boundsA, Bounds boundsB)
+    private bool my2Dintersect(Bounds boundsA, Bounds boundsB)
     {
         return boundsA.min.x <= boundsB.max.x && boundsA.max.x >= boundsB.min.x && boundsA.min.y <= boundsB.max.y && boundsA.max.y >= boundsB.min.y;
     }
+
+	private GameObject GetNextAvailableObstacle(){
+		for (int i = 0; i < maxObstacles; i++)
+//		{
+			if(!obstaclePool[i].active)
+				return obstaclePool[i];
+		}
+		return null;
+	}
 }
